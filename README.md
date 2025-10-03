@@ -33,21 +33,23 @@ module ripple_adder_task (
     reg c;
     integer i;
 
+    // Task for 1-bit full adder
     task full_adder;
         input a, b, cin;
         output s, cout;
         begin
-        ///
+            s = a ^ b ^ cin;               // sum
+            cout = (a & b) | (b & cin) | (a & cin); // carry
         end
     endtask
 
     always @(*) 
     begin
-        c = Cin;
+        c = Cin;  // initial carry-in
         for (i = 0; i < 4; i = i + 1) begin
             full_adder(A[i], B[i], c, Sum[i], c);
         end
-        Cout = c;
+        Cout = c; // final carry-out
     end
 endmodule
 
@@ -76,6 +78,39 @@ module ripple_counter_func (
 endmodule
 
 # Test Bench
+`timescale 1ns / 1ps
+
+module RCA_tb;
+
+    // Testbench signals
+    reg [3:0] A, B;
+    reg Cin;
+    wire [3:0] Sum;
+    wire Cout;
+
+    // Instantiate the DUT (Device Under Test)
+    ripple_adder_task uut (
+        .A(A),
+        .B(B),
+        .Cin(Cin),
+        .Sum(Sum),
+        .Cout(Cout)
+    );
+
+    initial begin
+        // Apply test cases
+        A = 4'b0000; B = 4'b0000; Cin = 0; #10;
+        A = 4'b0101; B = 4'b0011; Cin = 0; #10;
+        A = 4'b1111; B = 4'b0001; Cin = 0; #10;
+        A = 4'b1010; B = 4'b0101; Cin = 1; #10;
+        A = 4'b1111; B = 4'b1111; Cin = 1; #10;
+
+        // End simulation
+        #10 $finish;
+    end
+
+endmodule
+
 
 
 # Output Waveform 
