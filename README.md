@@ -55,29 +55,6 @@ endmodule
 
 
 # Test Bench
-
-# Output Waveform
-
-# 4 bit Ripple counter using Function
-// 4-bit Ripple Counter using Function
-module ripple_counter_func (
-    input clk, rst,
-    output reg [3:0] Q
-);
-
-    function [3:0] count;
-     ///
-    endfunction
-
-    always @(posedge clk or posedge rst) begin
-        if (rst)
-            Q <= 4'b0000;
-        else
-            Q <= count(Q);  // use function to increment
-    end
-endmodule
-
-# Test Bench
 `timescale 1ns / 1ps
 
 module RCA_tb;
@@ -110,6 +87,29 @@ module RCA_tb;
     end
 
 endmodule
+# Output Waveform
+
+# 4 bit Ripple counter using Function
+// 4-bit Ripple Counter using Function
+module ripple_counter_func (
+    input clk, rst,
+    output reg [3:0] Q
+);
+
+    function [3:0] count;
+     ///
+    endfunction
+
+    always @(posedge clk or posedge rst) begin
+        if (rst)
+            Q <= 4'b0000;
+        else
+            Q <= count(Q);  // use function to increment
+    end
+endmodule
+
+# Test Bench
+
 
 
 
