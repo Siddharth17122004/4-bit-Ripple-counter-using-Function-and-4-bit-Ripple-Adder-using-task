@@ -96,19 +96,65 @@ module ripple_counter_func (
     output reg [3:0] Q
 );
 
+    // Function to increment the counter
     function [3:0] count;
-     ///
+        input [3:0] q_in;
+        begin
+            count = q_in + 1;   // increment by 1
+        end
     endfunction
 
+    // Sequential block
     always @(posedge clk or posedge rst) begin
         if (rst)
-            Q <= 4'b0000;
+            Q <= 4'b0000;       // reset counter
         else
-            Q <= count(Q);  // use function to increment
+            Q <= count(Q);      // increment using function
     end
+
 endmodule
 
 # Test Bench
+`timescale 1ns / 1ps
+
+module ripple_counter_tb;
+
+    reg clk, rst;
+    wire [3:0] Q;
+
+    // Instantiate DUT (Device Under Test)
+    ripple_counter_func uut (
+        .clk(clk),
+        .rst(rst),
+        .Q(Q)
+    );
+
+    // Clock generation: toggle every 5 ns → 10 ns period (100 MHz)
+    always #5 clk = ~clk;
+
+    initial begin
+        // Initial values
+        clk = 0;
+        rst = 1;   // start with reset active
+        #12;       // hold reset for some time
+
+        rst = 0;   // release reset
+
+        // Let counter run
+        #100;
+
+        // Assert reset again mid-way
+        rst = 1; #10;
+        rst = 0;
+
+        // Run more cycles
+        #50;
+
+        // Finish simulation
+        $finish;
+    end
+
+endmodule
 
 
 
